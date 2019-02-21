@@ -12,6 +12,6 @@ First, edit the filepaths in the visualization/plotPosterior.py script to reflec
 python plotPosterior.py
 
 # Example Output
-Here is an example posterior calculation. The physics are calculated for the 2D Cahn Hilliard equations using the code references above, with dt = 5e-5. Inference is done on the uncertain parameter epsilon that appears in the Cahn Hilliard equation. The "ground truth" used is a Cahn Hilliard simulation run using a value of epsilon=0.1. We calculate 1000 MCMC samples in the posterior. The prior distribution is uniform[0,0.04], and we use Legendre chaos of order 50 (corresponding to 50 solver evaluations).
+Here is an example posterior calculation. The physics are calculated for the 2D Cahn Hilliard equations using the code references above, with dt = 5e-5. Inference is done on the uncertain parameter epsilon that appears in the Cahn Hilliard equation. The "ground truth" used is a Cahn Hilliard simulation run using a value of epsilon=0.1. The prior distribution is uniform[0,0.04], and we use Legendre chaos of order 50 (corresponding to 50 solver evaluations). We evaluate the PC surrogate of the posterior using 1000 samples.
 
-<img src="https://github.com/adegenna/mcmc/blob/master/pce.png">
+<img src="https://github.com/adegenna/pce/blob/master/pce.png">
