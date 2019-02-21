@@ -41,7 +41,7 @@ class Polynomial:
         J        = self.compute_jacobi_matrix(n)
         nodes,v  = np.linalg.eig(J)
         nodes    = np.real(nodes)
-        beta_0   = self.compute_1d_polynomial_norm(0)
+        beta_0   = self.compute_1d_polynomial_norm(0)**2
         weights  = np.real(beta_0 * (v[0]**2 / np.linalg.norm(v,axis=0)**2))
         idxnodes = np.argsort(nodes)
         return nodes[idxnodes],weights[idxnodes]

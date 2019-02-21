@@ -45,7 +45,7 @@ def main():
 
     # PCE sampler setup
     C_truth           = np.genfromtxt(inputs_pce.truestatepath)
-    polynomial        = Hermite(inputs_pce)
+    polynomial        = Legendre(inputs_pce)
     pce               = PCE(inputs_pce,polynomial)
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
@@ -54,7 +54,6 @@ def main():
     eval_test         = pce.polynomial.transform_base_nodes_with_prior(H_test)
     ysurrogate        = pce.polynomial.evaluate_hermite_surrogate(coeff_H,H_test)
     plt.plot(eval_nodes,L_nodes,'bo',eval_test,ysurrogate,'r'); plt.show()
-    print(coeff_H)
     #pce.calculate_posterior()
     
     # Output
