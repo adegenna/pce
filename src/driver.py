@@ -45,11 +45,7 @@ def main():
 
     # PCE sampler setup
     #C_truth    = np.genfromtxt(inputs_pce.truestatepath)
-    pce        = PCE(inputs_pce)
-    nodes = pce.compute_nodes(5);
-    print(nodes);
-    brasefasfa
-
+    pce           = PCE(inputs_pce)
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
     pce.compute_surrogate_of_likelihood_function()

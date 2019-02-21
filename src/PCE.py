@@ -86,15 +86,18 @@ class PCE():
         """
         Evaluate nth order hermite polynomial at point x.
         """
-        Hm1 = 1.0
-        H   = x 
-        for i in range(1,n):
-            Hp1 = x*H - i*Hm1
-            Hm1 = H.copy()
-            H   = Hp1.copy()
-        return H
+        if (n == 0):
+            return np.ones_like(x)
+        else:
+            Hm1 = np.ones_like(x)
+            H   = x
+            for i in range(1,n):
+                Hp1 = x*H - i*Hm1
+                Hm1 = H.copy()
+                H   = Hp1.copy()
+            return H
 
-    def compute_jacobi_matrix(self,n):
+    def compute_jacobi_matrix_hermite(self,n):
         # H_p1 + (Bn - x)*H + An*H_m1 = 0
         # An = -n
         # Bn = 0
@@ -104,7 +107,14 @@ class PCE():
             J[i+1,i] = 1*np.sqrt(i+1)
         return J
 
-    def compute_nodes(self,n):
-        J     = self.compute_jacobi_matrix(n)
-        lam,v = np.linalg.eig(J)
-        return lam
+    def compute_nodes_and_weights_hermite(self,n):
+        """
+        Method to compute the nodes and weights of the hermite polynomials. 
+        """
+        J        = self.compute_jacobi_matrix_hermite(n)
+        nodes,v  = np.linalg.eig(J)
+        nodes    = np.real(nodes)
+        beta_0   = np.sqrt(2*np.pi)
+        weights  = np.real(beta_0 * (v[0]**2 / np.linalg.norm(v,axis=0)**2))
+        idxnodes = np.argsort(nodes)
+        return nodes[idxnodes],weights[idxnodes]
