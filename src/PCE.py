@@ -1,22 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+from math import factorial
+from Polynomial import *
 
 class PCE():
     """
     Class for PCE sampling.
     """
-    def __init__(self,inputs):
+    def __init__(self,inputs,polynomial):
         self.initial_parameters = inputs.initial_parameters
         self.P                  = len(self.initial_parameters)
         self.sigma_likelihood   = inputs.sigma_likelihood
-        #self.pce_order          = inputs.posterior_samples
+        self.pce_order          = inputs.polynomial_order
         self.prior_mu           = inputs.prior_mu
         self.prior_sigma        = inputs.prior_sigma
         self.param_iter         = 0
         self.params             = []
         self.posterior          = []
         self.outdir             = inputs.outdir
+        self.polynomial         = polynomial
         
     def set_true_state(self,U_truth):
         """
@@ -55,6 +58,16 @@ class PCE():
         """
         return np.exp( -0.5*(discrepancy)**2/(self.sigma_likelihood**2) )
 
+    def likelihood_gaussian(self,params_i):
+        self.forward_model.reset_state()
+        self.forward_model.set_parameters(params_i)
+        self.forward_model.reset()
+        self.forward_model.solve()
+        U_model     = self.forward_model.get_current_state()
+        U_model     = self.forward_model.state.state2D_to_1D( U_model )
+        discrepancy = self.compute_model_data_discrepancy_Tfinal(U_model)
+        return self.compute_likelihood_gaussian(discrepancy)
+
     def evaluate_gaussian_prior(self,x):
         """
         Method to evaluate Gaussian prior at a point x.
@@ -81,40 +94,3 @@ class PCE():
             f.write(line)
             f.write('\n')            
         f.close()
-
-    def evaluate_1d_hermite_polynomial(self,n,x):
-        """
-        Evaluate nth order hermite polynomial at point x.
-        """
-        if (n == 0):
-            return np.ones_like(x)
-        else:
-            Hm1 = np.ones_like(x)
-            H   = x
-            for i in range(1,n):
-                Hp1 = x*H - i*Hm1
-                Hm1 = H.copy()
-                H   = Hp1.copy()
-            return H
-
-    def compute_jacobi_matrix_hermite(self,n):
-        # H_p1 + (Bn - x)*H + An*H_m1 = 0
-        # An = -n
-        # Bn = 0
-        J = np.zeros([n,n],dtype='complex')
-        for i in range(n-1):
-            J[i,i+1] = 1*np.sqrt(i+1)
-            J[i+1,i] = 1*np.sqrt(i+1)
-        return J
-
-    def compute_nodes_and_weights_hermite(self,n):
-        """
-        Method to compute the nodes and weights of the hermite polynomials. 
-        """
-        J        = self.compute_jacobi_matrix_hermite(n)
-        nodes,v  = np.linalg.eig(J)
-        nodes    = np.real(nodes)
-        beta_0   = np.sqrt(2*np.pi)
-        weights  = np.real(beta_0 * (v[0]**2 / np.linalg.norm(v,axis=0)**2))
-        idxnodes = np.argsort(nodes)
-        return nodes[idxnodes],weights[idxnodes]

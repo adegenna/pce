@@ -44,15 +44,21 @@ def main():
     physics    = ch.src.CahnHilliardPhysics.CahnHilliardPhysics(inputs_solver, state)
 
     # PCE sampler setup
-    #C_truth    = np.genfromtxt(inputs_pce.truestatepath)
-    pce           = PCE(inputs_pce)
+    C_truth           = np.genfromtxt(inputs_pce.truestatepath)
+    polynomial        = Hermite(inputs_pce)
+    pce               = PCE(inputs_pce,polynomial)
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
-    pce.compute_surrogate_of_likelihood_function()
-    pce.calculate_posterior()
+    coeff_H,eval_nodes,L_nodes   = pce.polynomial.compute_surrogate_using_gauss_quadrature(pce.likelihood_gaussian)
+    H_test            = np.linspace(pce.polynomial.nodes[0],pce.polynomial.nodes[-1],100)
+    eval_test         = pce.polynomial.transform_base_nodes_with_prior(H_test)
+    ysurrogate        = pce.polynomial.evaluate_hermite_surrogate(coeff_H,H_test)
+    plt.plot(eval_nodes,L_nodes,'bo',eval_test,ysurrogate,'r'); plt.show()
+    print(coeff_H)
+    #pce.calculate_posterior()
     
     # Output
-    pce.write(inputs_pce.outdir + "pce.out")
+    #pce.write(inputs_pce.outdir + "pce.out")
     
 if __name__ == '__main__':
     main()

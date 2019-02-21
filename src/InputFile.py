@@ -23,18 +23,8 @@ class InputFile():
         Absolute path to load directory
     outdir : string
         Absolute path to output directory
-    initialstatepath : string
-        Absolute path to initial state file
-    epsilon : float
-        Diffusion coefficient
-    dt : float
-        Timestep
-    t_steps : int
-        Number of timesteps
-    saveperiod : int
-        Sampling period for saving to output
-    eyre_a : int
-        Eyre time-scheme parameter
+    truestatepath : string
+        Absolute path to true state file
     """
     
     def __init__(self,args=[]):
@@ -55,6 +45,7 @@ class InputFile():
             self.prior_mu           = np.array( prior_mu.split(',') , dtype='float' )
             prior_sigma             = inputfilestream.readline().strip().split('= ')[1]
             self.prior_sigma        = np.array( prior_sigma.split(',') , dtype='float' )
+            self.polynomial_order   = int(inputfilestream.readline().strip().split('= ')[1])
             inputfilestream.close();
         except:
             print("Using no input file (blank initialization).")
