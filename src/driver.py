@@ -44,8 +44,12 @@ def main():
     physics    = ch.src.CahnHilliardPhysics.CahnHilliardPhysics(inputs_solver, state)
 
     # PCE sampler setup
-    C_truth    = np.genfromtxt(inputs_pce.truestatepath)
+    #C_truth    = np.genfromtxt(inputs_pce.truestatepath)
     pce        = PCE(inputs_pce)
+    nodes = pce.compute_nodes(5);
+    print(nodes);
+    brasefasfa
+
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
     pce.compute_surrogate_of_likelihood_function()
