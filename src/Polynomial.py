@@ -74,13 +74,12 @@ class Polynomial:
         coeff,eval_nodes,F_nodes   = self.compute_gauss_quadrature_projection(self.nodes,self.weights,F)
         return coeff,eval_nodes,F_nodes
 
-    def evaluate_hermite_surrogate(self,coeff,x):
+    def evaluate_surrogate(self,coeff,x):
         u_H      = np.zeros_like(x)
         for j in range(self.order):
             H_j  = self.evaluate_1d_polynomial(j,x)
             u_H += coeff[j] * H_j
         return u_H
-
 
 
 # Different instantiations of Polynomial base
@@ -95,6 +94,12 @@ class Hermite(Polynomial):
     def compute_1d_polynomial_norm(self,n):
         return np.sqrt(factorial(n))
 
+    def generate_samples_from_prior(self,n):
+        P_basic = np.random.gaussian(0,1,n)
+        P_eval  = 1./np.sqrt(2*np.pi) * np.exp( -0.5*P_basic**2 )
+        P_prior = self.transform_base_nodes_with_prior(P_basic)
+        return P_basic,P_eval,P_prior
+
 class Legendre(Polynomial):
 
     def __init__(self,inputs):
@@ -106,7 +111,11 @@ class Legendre(Polynomial):
     def compute_1d_polynomial_norm(self,n):
         return np.sqrt( 2./(2*n+1) )
 
-
+    def generate_samples_from_prior(self,n):
+        P_basic = np.random.uniform(-1,1,n)
+        P_eval  = np.ones(n)
+        P_prior = self.transform_base_nodes_with_prior(P_basic)
+        return P_basic,P_eval,P_prior
 
 # Test script
 if __name__ == '__main__':

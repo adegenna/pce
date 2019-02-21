@@ -49,15 +49,17 @@ def main():
     pce               = PCE(inputs_pce,polynomial)
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
-    coeff_H,eval_nodes,L_nodes   = pce.polynomial.compute_surrogate_using_gauss_quadrature(pce.likelihood_gaussian)
+    coeff_surrogate,eval_nodes,L_nodes = pce.polynomial.compute_surrogate_using_gauss_quadrature(pce.likelihood_gaussian)
     H_test            = np.linspace(pce.polynomial.nodes[0],pce.polynomial.nodes[-1],100)
     eval_test         = pce.polynomial.transform_base_nodes_with_prior(H_test)
-    ysurrogate        = pce.polynomial.evaluate_hermite_surrogate(coeff_H,H_test)
+    ysurrogate        = pce.polynomial.evaluate_surrogate(coeff_surrogate,H_test)
     plt.plot(eval_nodes,L_nodes,'bo',eval_test,ysurrogate,'r'); plt.show()
-    #pce.calculate_posterior()
+    post_x, post_y    = pce.calculate_posterior(coeff_surrogate)
+    plt.plot(post_x,post_y,'bo'); plt.show()
     
     # Output
-    #pce.write(inputs_pce.outdir + "pce.out")
+    np.savetxt(inputs_pce.outdir + "posterior_x.out", post_x)
+    np.savetxt(inputs_pce.outdir + "posterior_y.out", post_y)
     
 if __name__ == '__main__':
     main()

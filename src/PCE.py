@@ -20,6 +20,7 @@ class PCE():
         self.posterior          = []
         self.outdir             = inputs.outdir
         self.polynomial         = polynomial
+        self.posterior_samples  = inputs.posterior_samples
         
     def set_true_state(self,U_truth):
         """
@@ -83,14 +84,9 @@ class PCE():
         Method to append a sample to the posterior record.
         """
         self.posterior = np.hstack( [self.posterior,posterior] )
-    
-    def write(self,outfile):
-        """
-        Writes to outdir/ the results of the sampling, ie. (parameter_i , posterior_i).
-        """
-        f = open(outfile,'w+')
-        for i in range(self.params.shape[0]):
-            line = str(self.params[i])[1:-1] + " , " + str(self.posterior[i])
-            f.write(line)
-            f.write('\n')            
-        f.close()
+
+    def calculate_posterior(self,coeff):
+        prior_x,prior_evals,posterior_x = self.polynomial.generate_samples_from_prior(self.posterior_samples)
+        F_evals                         = self.polynomial.evaluate_surrogate(coeff,prior_x)
+        posterior_evals                 = F_evals * prior_evals / np.mean(F_evals)
+        return posterior_x, posterior_evals

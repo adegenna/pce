@@ -1,7 +1,7 @@
-projdir          = /home/adegennaro/Projects/AEOLUS/mcmc/src/
-datadir          = /home/adegennaro/Projects/AEOLUS/mcmc/data/
-loaddir          = /home/adegennaro/Projects/AEOLUS/mcmc/data/
-outdir           = /home/adegennaro/Projects/AEOLUS/mcmc/output/
+projdir          = /home/adegennaro/Projects/AEOLUS/pce/src/
+datadir          = /home/adegennaro/Projects/AEOLUS/pce/data/
+loaddir          = /home/adegennaro/Projects/AEOLUS/pce/data/
+outdir           = /home/adegennaro/Projects/AEOLUS/pce/output/
 truestatepath    = /home/adegennaro/Projects/AEOLUS/cahnhilliard_2d/output/C_1000.out
 initial_parameters = 0.02
 posterior_samples  = 1000
@@ -9,4 +9,4 @@ sigma_likelihood   = 60.0
 sigma_step         = 0.002
 prior_mu           = 0.02
 prior_sigma        = 0.02
-pce_order          = 20
+pce_order          = 50
