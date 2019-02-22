@@ -50,12 +50,7 @@ def main():
     pce.set_true_state(C_truth)
     pce.set_forward_model(physics)
     coeff_surrogate,eval_nodes,L_nodes = pce.polynomial.compute_surrogate_using_gauss_quadrature(pce.likelihood_gaussian)
-    H_test            = np.linspace(pce.polynomial.nodes[0],pce.polynomial.nodes[-1],100)
-    eval_test         = pce.polynomial.transform_base_nodes_with_prior(H_test)
-    ysurrogate        = pce.polynomial.evaluate_surrogate(coeff_surrogate,H_test)
-    plt.plot(eval_nodes,L_nodes,'bo',eval_test,ysurrogate,'r'); plt.show()
-    post_x, post_y    = pce.calculate_posterior(coeff_surrogate)
-    plt.plot(post_x,post_y,'bo'); plt.show()
+    post_x, post_y                     = pce.calculate_posterior(coeff_surrogate)
     
     # Output
     np.savetxt(inputs_pce.outdir + "posterior_x.out", post_x)

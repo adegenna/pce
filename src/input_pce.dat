@@ -9,4 +9,4 @@ sigma_likelihood   = 60.0
 sigma_step         = 0.002
 prior_mu           = 0.02
 prior_sigma        = 0.02
-pce_order          = 50
+pce_order          = 20

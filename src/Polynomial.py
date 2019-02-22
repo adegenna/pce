@@ -60,6 +60,7 @@ class Polynomial:
         eval_nodes     = self.transform_base_nodes_with_prior(nodes)
         # First compute Q evaluations of F
         for k in range(Q):
+            print("Computing function evaluation %d..." %(k+1))
             F_nodes[k] = F(eval_nodes[k])
         # Compute discrete projection
         for j in range(self.order):
