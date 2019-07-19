@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from math import factorial
-from Polynomial import *
+from pce.src.Polynomial import *
 
 class PCE():
     """
