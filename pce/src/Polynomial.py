@@ -118,6 +118,57 @@ class Legendre(Polynomial):
         P_prior = self.transform_base_nodes_with_prior(P_basic)
         return P_basic,P_eval,P_prior
 
+
+class Polynomial_Basic_Inputs():
+    
+    def __init__(self , order=5 , mu=0 , sigma=1 ):
+        
+        self.polynomial_order = order
+        self.prior_mu         = mu
+        self.prior_sigma      = sigma
+
+    
+class Hermite_2d():
+    
+    def __init__( self , idx_IJ , prior_mu , prior_sigma ):
+        
+        assert( np.all( [ len(idx_ij) == 2 for idx_ij in idx_IJ ] ) )
+        assert( len( prior_mu ) == 2 )
+        assert( len( prior_sigma ) == 2 )
+        
+        self.idx_IJ      = idx_IJ
+        self.prior_mu    = inputs.prior_mu
+        self.prior_sigma = inputs.prior_sigma
+        
+    def compute_2d_polynomial_norm( self , n1 , n2 ):
+        
+        H1 = Hermite( Polynomial_Basic_Inputs( order=n1 ) )
+        H2 = Hermite( Polynomial_Basic_Inputs( order=n2 ) )
+        
+        return H1.compute_1d_polynomial_norm(n1) * H2.compute_1d_polynomial_norm(n2)
+    
+    def evaluate_surrogate( self , coeff , x ):
+        
+        assert( np.all( [ len(ci) == 2 for ci in coeff ] ) )
+        assert( np.size(x) == 2 )
+        
+        u_H      = np.zeros_like(x)
+        
+        for (k,ij) in enumerate(self.idx_IJ):
+            
+            H_i   = Hermite( Polynomial_Basic_Inputs( ij[0] , self.prior_mu[0] , self.prior_sigma[0] ) )
+            H_j   = Hermite( Polynomial_Basic_Inputs( ij[1] , self.prior_mu[1] , self.prior_sigma[1] ) )
+            
+            H_i_x = H_i.evaluate_1d_polynomial(i,x[0])
+            H_j_y = H_i.evaluate_1d_polynomial(j,x[1])
+            
+            u_H += coeff[k][0] * coeff[k][1] * H_i_x * H_j_y
+        
+        return u_H
+
+
+
+    
 # Test script
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
