@@ -137,8 +137,8 @@ class Hermite_2d():
         assert( len( prior_sigma ) == 2 )
         
         self.idx_IJ      = idx_IJ
-        self.prior_mu    = inputs.prior_mu
-        self.prior_sigma = inputs.prior_sigma
+        self.prior_mu    = prior_mu
+        self.prior_sigma = prior_sigma
         
     def compute_2d_polynomial_norm( self , n1 , n2 ):
         
@@ -149,20 +149,20 @@ class Hermite_2d():
     
     def evaluate_surrogate( self , coeff , x ):
         
-        assert( np.all( [ len(ci) == 2 for ci in coeff ] ) )
-        assert( np.size(x) == 2 )
+        assert( np.all( [ np.size(ci) == 1 for ci in coeff ] ) )
+        assert( np.shape(x)[0] == 2 )
         
-        u_H      = np.zeros_like(x)
+        u_H      = np.zeros( np.shape(x)[1] )
         
         for (k,ij) in enumerate(self.idx_IJ):
             
             H_i   = Hermite( Polynomial_Basic_Inputs( ij[0] , self.prior_mu[0] , self.prior_sigma[0] ) )
             H_j   = Hermite( Polynomial_Basic_Inputs( ij[1] , self.prior_mu[1] , self.prior_sigma[1] ) )
             
-            H_i_x = H_i.evaluate_1d_polynomial(i,x[0])
-            H_j_y = H_i.evaluate_1d_polynomial(j,x[1])
+            H_i_x = H_i.evaluate_1d_polynomial(ij[0],x[0])
+            H_j_y = H_i.evaluate_1d_polynomial(ij[1],x[1])
             
-            u_H += coeff[k][0] * coeff[k][1] * H_i_x * H_j_y
+            u_H  += coeff[k] * H_i_x * H_j_y
         
         return u_H
 
